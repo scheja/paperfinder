@@ -1,6 +1,6 @@
 package edu.kit.ksri.paperfinder.controller;
 
-import edu.kit.ksri.paperfinder.model.Paper;
+import edu.kit.ksri.paperfinder.model.Article;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -32,10 +32,10 @@ public class PartialResultsTask extends Task<ObservableList<Rectangle>> {
 
     @Override
     protected ObservableList call() throws Exception {
-        updateMessage("Retrieving Papers...");
+        updateMessage("Retrieving Articles...");
         for (int i=1; i<=100; i++) {
             if (isCancelled()) break;
-            final Paper p = new Paper();
+            final Article p = new Article();
             p.setAuthor("Author " + i);
             p.setTitle(searchString + " " + i);
             p.setCitations(i);
@@ -43,11 +43,11 @@ public class PartialResultsTask extends Task<ObservableList<Rectangle>> {
             final int ii = i;
             Platform.runLater(() -> {
                 partialResults.get().add(p);
-                updateMessage("Retrieving Papers (" + ii + "/" + 100 + ")");
+                updateMessage("Retrieving Articles (" + ii + "/" + 100 + ")");
             });
             Thread.sleep(30);
         }
-        updateMessage("Retrieved Papers");
+        updateMessage("Retrieved Articles");
         return partialResults.get();
     }
 }

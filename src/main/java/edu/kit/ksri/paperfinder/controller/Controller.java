@@ -1,6 +1,6 @@
 package edu.kit.ksri.paperfinder.controller;
 
-import edu.kit.ksri.paperfinder.model.Paper;
+import edu.kit.ksri.paperfinder.model.Article;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -25,17 +25,17 @@ public class Controller {
     @FXML private TableColumn authorCol;
     @FXML private TableColumn citationsCol;
     @FXML private Label status;
-    private ObservableList<Paper> results;
+    private ObservableList<Article> results;
 
     @FXML
     protected void initialize() {
         accordion.setExpandedPane(searchPane);
 
-        Platform.runLater(() -> searchText.requestFocus());
+        Platform.runLater(searchText::requestFocus);
 
-        titleCol.setCellValueFactory(new PropertyValueFactory<Paper, String>("title"));
-        authorCol.setCellValueFactory(new PropertyValueFactory<Paper, String>("author"));
-        citationsCol.setCellValueFactory(new PropertyValueFactory<Paper, Integer>("citations"));
+        titleCol.setCellValueFactory(new PropertyValueFactory<Article, String>("title"));
+        authorCol.setCellValueFactory(new PropertyValueFactory<Article, String>("author"));
+        citationsCol.setCellValueFactory(new PropertyValueFactory<Article, Integer>("citations"));
 
     }
 
