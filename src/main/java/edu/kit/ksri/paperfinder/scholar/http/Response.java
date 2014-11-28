@@ -14,20 +14,17 @@ import java.util.logging.Logger;
  */
 public class Response {
     static Logger logger = Logger.getLogger(Response.class.toString());
-    private HttpRequestBase requestBase;
-    private CloseableHttpClient client;
-    private CloseableHttpResponse response;
     private int statusCode;
     private String responseBody;
 
     public Response(Request request) {
         logger.info(String.format("Initializing Response"));
-        this.requestBase = request.getRequest();
-        this.client = HttpClientFactory.getHttpClient();
+        HttpRequestBase requestBase = request.getRequest();
+        CloseableHttpClient client = HttpClientFactory.getHttpClient();
 
         try {
             logger.info("Executing Response");
-            this.response = client.execute(requestBase);
+            CloseableHttpResponse response = client.execute(requestBase);
 
             try {
                 this.statusCode = response.getStatusLine().getStatusCode();
@@ -50,9 +47,11 @@ public class Response {
         }
     }
 
-
+    public String getResponseBody() {
+        return responseBody;
+    }
 
     public boolean wasSuccessful() {
-        return !(!(this.statusCode >= 200) && (this.statusCode < 400));
+        return (this.statusCode >= 200) && (this.statusCode < 400);
     }
 }

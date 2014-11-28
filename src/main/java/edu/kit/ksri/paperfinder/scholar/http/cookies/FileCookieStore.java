@@ -27,11 +27,17 @@ public class FileCookieStore implements CookieStore, Serializable {
     @GuardedBy("this")
     private TreeSet<Cookie> cookies;
     private String filepath;
-    private boolean fileWasPresent;
 
     public FileCookieStore() {
         super();
-        this.filepath = Config.CONFIG_PATH + ".cookies.json";
+        this.filepath = Config.CONFIG_PATH + "cookies.json";
+        this.cookies = new TreeSet<Cookie>(new CookieIdentityComparator());
+        readFile();
+    }
+
+    public FileCookieStore(String pathsegment) {
+        super();
+        this.filepath = Config.CONFIG_PATH + pathsegment + ".cookies.json";
         this.cookies = new TreeSet<Cookie>(new CookieIdentityComparator());
         readFile();
     }
@@ -128,13 +134,9 @@ public class FileCookieStore implements CookieStore, Serializable {
 
         if (content != null && !content.equals("")) {
             // add the cookies
-            Type listType = new TypeToken<Set<BasicClientCookie>>() {
-            }.getType();
+            Type listType = new TypeToken<Set<BasicClientCookie>>() {}.getType();
             Set<Cookie> cookies = new Gson().fromJson(content, listType);
             this.cookies.addAll(cookies);
-            this.fileWasPresent = true;
-        } else {
-            this.fileWasPresent = false;
         }
     }
 
@@ -142,13 +144,4 @@ public class FileCookieStore implements CookieStore, Serializable {
         File myFile = new File(this.filepath);
         return myFile.delete();
     }
-
-    public boolean fileWasPresent() {
-        return fileWasPresent;
-    }
-
-    public void setFileWasPresent(boolean fileWasPresent) {
-        this.fileWasPresent = fileWasPresent;
-    }
-
 }

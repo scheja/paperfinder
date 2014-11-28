@@ -28,8 +28,6 @@ public class FileUtils {
             }
             myReader.close();
             return aBuffer;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }

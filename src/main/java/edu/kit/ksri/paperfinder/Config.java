@@ -5,5 +5,6 @@ package edu.kit.ksri.paperfinder;
  */
 public class Config {
     public static final String CONFIG_PATH = System.getProperty("user.home") + "/paperfinder/";
-
+    public static final String USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.65 Safari/537.36";
+    public static final String BASE_DOMAIN = "http://scholar.google.com/";
 }
