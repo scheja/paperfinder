@@ -1,7 +1,10 @@
 package edu.kit.ksri.paperfinder.controller;
 
+import edu.kit.ksri.paperfinder.Config;
 import edu.kit.ksri.paperfinder.model.Article;
+import edu.kit.ksri.paperfinder.scholar.tasks.RetrieveResultsTask;
 import javafx.application.Platform;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -36,20 +39,20 @@ public class Controller {
         titleCol.setCellValueFactory(new PropertyValueFactory<Article, String>("title"));
         authorCol.setCellValueFactory(new PropertyValueFactory<Article, String>("author"));
         citationsCol.setCellValueFactory(new PropertyValueFactory<Article, Integer>("citations"));
-
     }
 
     @FXML
     private void performSearch(ActionEvent event) {
         String searchString = searchText.getText();
+        int numberOfResults = Config.DEFAULT_NUMBER_OF_RESULTS;
 
-        PartialResultsTask partialResultsTask = new PartialResultsTask(searchString);
-        new Thread(partialResultsTask).start();
-        results = partialResultsTask.getPartialResults();
+        RetrieveResultsTask retrieveResultsTask = new RetrieveResultsTask(searchString, numberOfResults);
+        new Thread(retrieveResultsTask).start();
+        results = retrieveResultsTask.getPartialResults();
         resultsTableView.setItems(results);
-        status.textProperty().bind(partialResultsTask.messageProperty());
-
-        partialResultsTask.setOnSucceeded(e -> accordion.setExpandedPane(filterPane));
+        status.textProperty().bind(retrieveResultsTask.messageProperty());
+        results.addListener((ListChangeListener<Article>) c -> resultsTableView.sort());
+        retrieveResultsTask.setOnSucceeded(e -> accordion.setExpandedPane(filterPane));
     }
 
     @FXML

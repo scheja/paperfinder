@@ -1,4 +1,4 @@
-package edu.kit.ksri.paperfinder.scholar.util;
+package edu.kit.ksri.paperfinder.scholar.parser;
 
 import edu.kit.ksri.paperfinder.model.Article;
 import org.jsoup.nodes.Element;

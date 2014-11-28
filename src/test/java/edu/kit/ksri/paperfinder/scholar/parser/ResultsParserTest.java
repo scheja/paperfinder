@@ -1,26 +1,18 @@
-package edu.kit.ksri.paperfinder.scholar.util;
+package edu.kit.ksri.paperfinder.scholar.parser;
 
 import edu.kit.ksri.paperfinder.model.Article;
-import org.apache.commons.io.FileUtils;
+import edu.kit.ksri.paperfinder.scholar.util.FileUtils;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class ResultsParserTest {
 
     @Test
     public void testParse() throws Exception {
-        String html = null;
-        try {
-            html = FileUtils.readFileToString(new File(getClass().getResource("/results.html").getFile()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        String html = FileUtils.readFile(getClass().getResource("/results.html").getFile());
         ResultsParser parser = new ResultsParser(html);
 
         List<Article> articles = parser.parse();

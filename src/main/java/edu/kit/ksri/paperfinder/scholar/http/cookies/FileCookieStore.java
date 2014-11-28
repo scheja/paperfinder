@@ -3,6 +3,7 @@ package edu.kit.ksri.paperfinder.scholar.http.cookies;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import edu.kit.ksri.paperfinder.Config;
+import edu.kit.ksri.paperfinder.scholar.util.FileUtils;
 import org.apache.http.annotation.GuardedBy;
 import org.apache.http.annotation.ThreadSafe;
 import org.apache.http.cookie.Cookie;

@@ -1,4 +1,4 @@
-package edu.kit.ksri.paperfinder.scholar.http.cookies;
+package edu.kit.ksri.paperfinder.scholar.util;
 
 /**
  * Created by janscheurenbrand on 10.08.14.
