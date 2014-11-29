@@ -43,7 +43,7 @@ public class RetrieveResultsTask extends Task<ObservableList<Article>> {
 
         ContentRetriever contentRetriever = new ContentRetriever();
         int i = 0;
-        while (i <= numberOfPagesToFetch) {
+        while (i < numberOfPagesToFetch) {
             String html = contentRetriever.getSingleResultPage(q, i, resultsPerPage, false, false);
             ResultsParser resultsParser = new ResultsParser(html);
             List<Article> articleList = resultsParser.parse();

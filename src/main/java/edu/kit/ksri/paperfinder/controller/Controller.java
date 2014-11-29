@@ -4,7 +4,6 @@ import edu.kit.ksri.paperfinder.Config;
 import edu.kit.ksri.paperfinder.model.Article;
 import edu.kit.ksri.paperfinder.scholar.tasks.RetrieveResultsTask;
 import javafx.application.Platform;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,8 +16,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
  */
 public class Controller {
 
-    @FXML
-    private Accordion accordion;
+    @FXML private MenuBar menubar;
+    @FXML private Accordion accordion;
     @FXML private TitledPane searchPane;
     @FXML private TitledPane filterPane;
     @FXML private TitledPane exportPane;
@@ -26,18 +25,25 @@ public class Controller {
     @FXML private TableView resultsTableView;
     @FXML private TableColumn titleCol;
     @FXML private TableColumn authorCol;
+    @FXML private TableColumn publicationCol;
+    @FXML private TableColumn sourceCol;
     @FXML private TableColumn citationsCol;
+    @FXML private TableColumn yearPublishedCol;
     @FXML private Label status;
     private ObservableList<Article> results;
 
     @FXML
     protected void initialize() {
+        menubar.setUseSystemMenuBar(true);
         accordion.setExpandedPane(searchPane);
 
         Platform.runLater(searchText::requestFocus);
 
         titleCol.setCellValueFactory(new PropertyValueFactory<Article, String>("title"));
         authorCol.setCellValueFactory(new PropertyValueFactory<Article, String>("author"));
+        sourceCol.setCellValueFactory(new PropertyValueFactory<Article, String>("source"));
+        publicationCol.setCellValueFactory(new PropertyValueFactory<Article, String>("publication"));
+        yearPublishedCol.setCellValueFactory(new PropertyValueFactory<Article, Integer>("yearPublished"));
         citationsCol.setCellValueFactory(new PropertyValueFactory<Article, Integer>("citations"));
     }
 
@@ -51,7 +57,6 @@ public class Controller {
         results = retrieveResultsTask.getPartialResults();
         resultsTableView.setItems(results);
         status.textProperty().bind(retrieveResultsTask.messageProperty());
-        results.addListener((ListChangeListener<Article>) c -> resultsTableView.sort());
         retrieveResultsTask.setOnSucceeded(e -> accordion.setExpandedPane(filterPane));
     }
 

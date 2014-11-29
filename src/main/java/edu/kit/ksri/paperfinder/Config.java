@@ -9,5 +9,5 @@ public class Config {
     public static final String BASE_DOMAIN = "http://scholar.google.com/";
     public static final boolean TEST_MODE = false;
     public static final int RESULTS_PER_PAGE = 20;
-    public static final int DEFAULT_NUMBER_OF_RESULTS = 50;
+    public static final int DEFAULT_NUMBER_OF_RESULTS = 20;
 }

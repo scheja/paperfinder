@@ -11,6 +11,8 @@ import javafx.beans.property.StringProperty;
 public class Article {
     private StringProperty author = new SimpleStringProperty();
     private StringProperty title = new SimpleStringProperty();
+    private StringProperty publication = new SimpleStringProperty();
+    private StringProperty source = new SimpleStringProperty();
     private IntegerProperty yearPublished = new SimpleIntegerProperty();
     private IntegerProperty citations = new SimpleIntegerProperty();
 
@@ -38,6 +40,30 @@ public class Article {
 
     public void setTitle(String title) {
         this.title.set(title);
+    }
+
+    public String getPublication() {
+        return publication.get();
+    }
+
+    public StringProperty publicationProperty() {
+        return publication;
+    }
+
+    public void setPublication(String publication) {
+        this.publication.set(publication);
+    }
+
+    public String getSource() {
+        return source.get();
+    }
+
+    public StringProperty sourceProperty() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source.set(source);
     }
 
     public int getYearPublished() {
