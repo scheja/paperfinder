@@ -1,7 +1,18 @@
 apply plugin: 'java'
-
+//apply from: 'javafx.plugin'
 sourceCompatibility = 1.8
 version = '1.0'
+
+//javafx {
+//    appID 'paperfinder'
+//    appName 'Paperfinder'
+//    mainClass 'edu.kit.ksri.paperfinder.Main'
+//    category = 'demo'
+//    copyright = 'Copyright (c) 2013 Danno Ferrin'
+//    description = 'Verbose app description'
+//    licenseType = '3 clause BSD'
+//    vendor = 'Me!'
+//}
 
 repositories {
     mavenCentral()
