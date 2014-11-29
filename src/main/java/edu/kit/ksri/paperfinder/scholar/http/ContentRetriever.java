@@ -3,6 +3,9 @@ package edu.kit.ksri.paperfinder.scholar.http;
 import edu.kit.ksri.paperfinder.Config;
 import edu.kit.ksri.paperfinder.scholar.util.FileUtils;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 /**
  * Created by janscheurenbrand on 28.11.14.
  */
@@ -24,7 +27,11 @@ public class ContentRetriever {
         }
 
         Request request = new Request(Verb.GET, Config.BASE_DOMAIN.concat("/scholar"));
-        request.addURIParam("q",searchTerm);
+        try {
+            request.addURIParam("q", URLEncoder.encode(searchTerm, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         request.addURIParam("num", String.valueOf(n));
         if (i > 0) {
             request.addURIParam("start", String.valueOf(n*i));
