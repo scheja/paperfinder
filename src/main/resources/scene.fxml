@@ -14,7 +14,11 @@
               <AnchorPane minHeight="0.0" minWidth="0.0">
                      <children>
                         <TextField fx:id="searchText" layoutX="14.0" layoutY="14.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="%search.placeholder" />
-                         <Button layoutX="14.0" layoutY="50.0" mnemonicParsing="false" onAction="#performSearch" text="%search.button" />
+                         <Button layoutX="14.0" layoutY="161.0" mnemonicParsing="false" onAction="#performSearch" prefHeight="26.0" prefWidth="163.0" text="%search.button" />
+                        <TextField fx:id="resultsTextfield" layoutX="14.0" layoutY="115.0" prefHeight="26.0" prefWidth="65.0" promptText="Anzahl" text="100" />
+                        <Label layoutX="84.0" layoutY="120.0" text="%search.results" />
+                        <CheckBox fx:id="includePatentsCheckbox" layoutX="14.0" layoutY="54.0" mnemonicParsing="false" text="%search.patents" />
+                        <CheckBox fx:id="includeCitationsCheckbox" layoutX="14.0" layoutY="83.0" mnemonicParsing="false" text="%search.citations" />
                      </children>
                   </AnchorPane>
             </content>

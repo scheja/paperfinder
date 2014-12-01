@@ -13,25 +13,32 @@ import javafx.concurrent.Task;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
+import java.util.logging.Logger;
 
 /**
  * Created by janscheurenbrand on 26.11.14.
  */
 public class RetrieveResultsTask extends Task<ObservableList<Article>> {
+    private static Logger logger = Logger.getLogger(RetrieveResultsTask.class.toString());
 
     private ReadOnlyObjectWrapper<ObservableList<Article>> partialResults = new ReadOnlyObjectWrapper<>(this, "partialResults", FXCollections.observableArrayList(new ArrayList()));
     private String q;
     private int n;
+    private boolean includePatents;
+    private boolean includeCitations;
 
     /**
      * Async Task to retrieve Articles from Google Scholar
      * Work with the ObservableList of Articles
      * @param q Search term
-     * @param n Number of Articles to fetch
+     * @param n Number of articles to fetch
      */
-    public RetrieveResultsTask(String q, int n) {
+    public RetrieveResultsTask(String q, int n, boolean includePatents, boolean includeCitations) {
         this.q = q;
         this.n = n;
+        this.includePatents = includePatents;
+        this.includeCitations = includeCitations;
     }
 
     @Override
@@ -40,17 +47,22 @@ public class RetrieveResultsTask extends Task<ObservableList<Article>> {
 
         int resultsPerPage = Config.RESULTS_PER_PAGE;
         int numberOfPagesToFetch = (int) Math.ceil((double) n / (double) resultsPerPage);
+        logger.info(String.format("Going to fetch %s pages", numberOfPagesToFetch));
 
         ContentRetriever contentRetriever = new ContentRetriever();
         int i = 0;
         while (i < numberOfPagesToFetch) {
-            String html = contentRetriever.getSingleResultPage(q, i, resultsPerPage, false, false);
+            logger.info("Fetching page " + (i+1));
+            String html = contentRetriever.getSingleResultPage(q, i, resultsPerPage, includePatents, includeCitations);
             ResultsParser resultsParser = new ResultsParser(html);
             List<Article> articleList = resultsParser.parse();
             partialResults.get().addAll(articleList);
             Comparator<Article> comparator = (a1, a2) -> Integer.compare(a2.getCitations(), a1.getCitations());
             FXCollections.sort(partialResults.get(), comparator);
-            Thread.sleep(1000);
+            logger.info(String.format("Added %s articles from page %s", articleList.size(), (i+1)));
+            int millis = new Random().nextInt(Config.SLEEP_WIGGLE) + Config.SLEEP_BASE;
+            logger.info(String.format("Sleeping for %s ms to prevent Google's anti-bot-ban", millis));
+            Thread.sleep(millis);
             i++;
         }
 

@@ -10,4 +10,6 @@ public class Config {
     public static final boolean TEST_MODE = false;
     public static final int RESULTS_PER_PAGE = 20;
     public static final int DEFAULT_NUMBER_OF_RESULTS = 20;
+    public static final int SLEEP_WIGGLE = 500;
+    public static final int SLEEP_BASE = 500;
 }

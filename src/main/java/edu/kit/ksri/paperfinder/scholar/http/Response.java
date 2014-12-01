@@ -36,8 +36,8 @@ public class Response {
                     result.append(line);
                 }
                 this.responseBody = result.toString();
-                logger.info("Response Content:");
-                logger.info(this.responseBody);
+                //logger.info("Response Content:");
+                //logger.info(this.responseBody);
             } finally {
                 response.close();
             }
