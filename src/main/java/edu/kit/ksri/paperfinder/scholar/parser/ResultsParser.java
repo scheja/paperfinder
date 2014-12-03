@@ -6,6 +6,9 @@ import org.jsoup.nodes.Element;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static edu.kit.ksri.paperfinder.util.NumberUtils.parseInt;
+
+
 /**
  * This parser works with the 2014-11-28 Google Scholar result HTML format
  */
@@ -26,30 +29,74 @@ public class ResultsParser extends ParserBase {
     private Article buildArticleFromElement(Element element) {
         Article article = new Article();
 
-        Element title = element.select(".gs_rt > a").first();
-        article.setTitle(title.text());
-
-        Element metaInfo = element.getElementsByClass("gs_a").first();
-        String metaInfoText = metaInfo.text();
-        String[] metaInfoTextParts = metaInfoText.split(" - ");
-        String author = metaInfoTextParts[0];
-        article.setAuthor(author);
-
-        String publicationAndYear = metaInfoTextParts[1];
-        String year = publicationAndYear.substring(publicationAndYear.length()-4, publicationAndYear.length());
-        article.setYearPublished(Integer.parseInt(year));
-
-        if (publicationAndYear.length() > 6) {
-            String publication = publicationAndYear.substring(0, publicationAndYear.length()-4);
-            article.setPublication(publication);
+        try {
+            Element title = element.select(".gs_rt > a").first();
+            article.setTitle(title.text());
+        } catch (Exception e) {
+            article.setTitle("n/a");
         }
 
-        String source = metaInfoTextParts[metaInfoTextParts.length-1];
-        article.setSource(source);
+        String[] metaInfoTextParts = new String[0];
+        try {
+            Element metaInfo = element.getElementsByClass("gs_a").first();
+            String metaInfoText = metaInfo.text();
+            metaInfoTextParts = metaInfoText.split(" - ");
+            String author = metaInfoTextParts[0];
+            article.setAuthor(author);
+        } catch (Exception e) {
+            article.setAuthor("n/a");
+        }
 
-        Element citationsElement = element.select(".gs_ri > .gs_fl > a").first();
-        String citationText = citationsElement.text();
-        article.setCitations(Integer.parseInt(citationText.replaceAll("[\\D]", "")));
+        String publicationAndYear = null;
+        try {
+            publicationAndYear = metaInfoTextParts[1];
+            String year = publicationAndYear.substring(publicationAndYear.length()-4, publicationAndYear.length());
+            article.setYearPublished(parseInt(year, -1));
+        } catch (Exception e) {
+            article.setYearPublished(-1);
+        }
+
+        if (publicationAndYear.length() > 6) {
+            try {
+                String publication = publicationAndYear.substring(0, publicationAndYear.length()-4);
+                article.setPublication(publication);
+            } catch (Exception e) {
+                article.setPublication("n/a");
+            }
+        }
+
+        try {
+            String source = metaInfoTextParts[metaInfoTextParts.length-1];
+            article.setSource(source);
+        } catch (Exception e) {
+            article.setSource("n/a");
+        }
+
+        try {
+            Element citationsElement = element.select(".gs_ri > .gs_fl > a").first();
+            String citationText = citationsElement.text();
+            article.setCitations(parseInt(citationText.replaceAll("[\\D]", ""),0));
+        } catch (Exception e) {
+            article.setCitations(-1);
+        }
+
+        try {
+            Element abstractElement = element.select(".gs_ri > .gs_rs").first();
+            String abstractText = abstractElement.text();
+            article.setAbstractText(abstractText);
+        } catch (Exception e) {
+            article.setAbstractText("n/a");
+        }
+
+        try {
+            Element pdfLinkElement = element.select(".gs_ttss > a").first();
+            if (pdfLinkElement != null) {
+                String pdfLink = pdfLinkElement.attr("href");
+                article.setPdfLink(pdfLink);
+            }
+        } catch (Exception e) {
+            article.setPdfLink("");
+        }
 
         return article;
     }
