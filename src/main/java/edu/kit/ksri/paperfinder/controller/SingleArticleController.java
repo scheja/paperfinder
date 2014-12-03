@@ -24,9 +24,7 @@ public class SingleArticleController {
     private List<Article> completeResultList = new ArrayList<>();
 
     @FXML
-    protected void initialize() {
-        System.out.println("Welcome to single Article View");
-    }
+    protected void initialize() { }
 
     public Article getArticle() {
         return article;

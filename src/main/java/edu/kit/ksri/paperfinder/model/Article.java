@@ -114,6 +114,6 @@ public class Article {
     }
 
     public boolean hasPDF() {
-        return !pdfLink.get().isEmpty();
+        return pdfLink != null && pdfLink.get() != null && !pdfLink.get().isEmpty();
     }
 }

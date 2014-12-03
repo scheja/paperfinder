@@ -69,9 +69,11 @@ public class MainController {
 
         Platform.runLater(searchText::requestFocus);
 
-        resultsTextfield.addEventFilter(KeyEvent.KEY_TYPED, event -> {
-            if (!"0123456789".contains(event.getCharacter())) event.consume();
-        });
+        makeNumberField(resultsTextfield);
+        makeNumberField(citationsLowTextfield);
+        makeNumberField(citationsHighTextfield);
+        makeNumberField(publishedYearLowTextfield);
+        makeNumberField(publishedYearHighTextfield);
 
         titleCol.setCellValueFactory(new PropertyValueFactory<Article, String>("title"));
         authorCol.setCellValueFactory(new PropertyValueFactory<Article, String>("author"));
@@ -135,8 +137,9 @@ public class MainController {
                 .filter(article -> article.getCitations() <= parseInt(citationsHighTextfield.getText(), Integer.MAX_VALUE))
                 .filter(article -> article.getYearPublished() >= parseInt(publishedYearLowTextfield.getText(), 0))
                 .filter(article -> article.getYearPublished() <= parseInt(publishedYearHighTextfield.getText(), Integer.MAX_VALUE))
-                .filter(article -> onlyPDFCheckbox.isSelected() && (onlyPDFCheckbox.isSelected() == article.hasPDF()))
+                .filter(article -> (onlyPDFCheckbox.isSelected() && article.hasPDF()) || (!onlyPDFCheckbox.isSelected()))
                 .collect(Collectors.toList()));
+        singleArticleController.setArticle(results.get(0));
     }
 
     @FXML
@@ -164,6 +167,12 @@ public class MainController {
 
     private String t(String key) {
         return resourceBundle.getString(key);
+    }
+
+    private void makeNumberField(TextField textField) {
+        textField.addEventFilter(KeyEvent.KEY_TYPED, event -> {
+            if (!"0123456789".contains(event.getCharacter())) event.consume();
+        });
     }
 
 }
