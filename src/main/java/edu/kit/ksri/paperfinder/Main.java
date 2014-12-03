@@ -23,6 +23,8 @@ public class Main extends Application {
         Scene scene = new Scene(root, 800, 600);
         primaryStage.setTitle(resourceBundle.getString("app.name"));
         primaryStage.setScene(scene);
+        primaryStage.setMinHeight(625);
+        primaryStage.setMinWidth(800);
         primaryStage.show();
     }
 }
