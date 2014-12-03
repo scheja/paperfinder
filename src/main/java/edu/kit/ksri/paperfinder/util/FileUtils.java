@@ -1,4 +1,4 @@
-package edu.kit.ksri.paperfinder.scholar.util;
+package edu.kit.ksri.paperfinder.util;
 
 /**
  * Created by janscheurenbrand on 10.08.14.

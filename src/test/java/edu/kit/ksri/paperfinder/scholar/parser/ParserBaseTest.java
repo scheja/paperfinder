@@ -1,6 +1,6 @@
 package edu.kit.ksri.paperfinder.scholar.parser;
 
-import edu.kit.ksri.paperfinder.scholar.util.FileUtils;
+import edu.kit.ksri.paperfinder.util.FileUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;

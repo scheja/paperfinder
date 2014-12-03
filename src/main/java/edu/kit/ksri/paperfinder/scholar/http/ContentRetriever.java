@@ -1,7 +1,7 @@
 package edu.kit.ksri.paperfinder.scholar.http;
 
 import edu.kit.ksri.paperfinder.Config;
-import edu.kit.ksri.paperfinder.scholar.util.FileUtils;
+import edu.kit.ksri.paperfinder.util.FileUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
