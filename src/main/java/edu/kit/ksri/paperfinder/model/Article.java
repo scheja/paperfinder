@@ -1,9 +1,6 @@
 package edu.kit.ksri.paperfinder.model;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 
 /**
  * Created by janscheurenbrand on 26.11.14.
@@ -15,6 +12,8 @@ public class Article {
     private StringProperty source = new SimpleStringProperty();
     private IntegerProperty yearPublished = new SimpleIntegerProperty();
     private IntegerProperty citations = new SimpleIntegerProperty();
+    private StringProperty abstractText = new SimpleStringProperty();
+    private StringProperty pdfLink = new SimpleStringProperty();
 
     public Article() {}
 
@@ -88,5 +87,33 @@ public class Article {
 
     public void setCitations(int citations) {
         this.citations.set(citations);
+    }
+
+    public String getAbstractText() {
+        return abstractText.get();
+    }
+
+    public StringProperty abstractTextProperty() {
+        return abstractText;
+    }
+
+    public void setAbstractText(String abstractText) {
+        this.abstractText.set(abstractText);
+    }
+
+    public String getPdfLink() {
+        return pdfLink.get();
+    }
+
+    public StringProperty pdfLinkProperty() {
+        return pdfLink;
+    }
+
+    public void setPdfLink(String pdfLink) {
+        this.pdfLink.set(pdfLink);
+    }
+
+    public boolean hasPDF() {
+        return !pdfLink.get().isEmpty();
     }
 }

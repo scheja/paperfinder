@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="singleArticle" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefWidth="600.0" spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.kit.ksri.paperfinder.controller.SingleArticleController">
+   <children>
+      <Label fx:id="authorLabel" text="Authors" />
+      <Label fx:id="titleLabel" text="Title">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <Label fx:id="abstractLabel" text="(Multiline) Abstract" wrapText="true" />
+   </children>
+   <padding>
+      <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
+   </padding>
+</VBox>
