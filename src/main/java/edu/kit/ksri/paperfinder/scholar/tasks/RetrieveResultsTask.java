@@ -51,19 +51,42 @@ public class RetrieveResultsTask extends Task<ObservableList<Article>> {
 
         ContentRetriever contentRetriever = new ContentRetriever();
         int i = 0;
+        String html = null;
         while (i < numberOfPagesToFetch) {
             logger.info("Fetching page " + (i+1));
-            String html = contentRetriever.getSingleResultPage(q, i, resultsPerPage, includePatents, includeCitations);
-            ResultsParser resultsParser = new ResultsParser(html);
-            List<Article> articleList = resultsParser.parse();
-            partialResults.get().addAll(articleList);
-            Comparator<Article> comparator = (a1, a2) -> Integer.compare(a2.getCitations(), a1.getCitations());
-            FXCollections.sort(partialResults.get(), comparator);
-            logger.info(String.format("Added %s articles from page %s", articleList.size(), (i+1)));
-            int millis = new Random().nextInt(Config.SLEEP_WIGGLE) + Config.SLEEP_BASE;
-            logger.info(String.format("Sleeping for %s ms to prevent Google's anti-bot-ban", millis));
-            Thread.sleep(millis);
-            i++;
+            if (html == null) {
+                html =  contentRetriever.getSingleResultPage(q, i, resultsPerPage, includePatents, includeCitations);
+            }
+
+            if (html.contains("captcha")) {
+                updateMessage("FAILED TO LOAD RESULTS DUE TO UNUSUAL TRAFFIC. FURTHER ACTION IS REQUIRED.");
+
+                SolveCaptchaTask solveCaptchaTask = new SolveCaptchaTask(html);
+                Thread thread = new Thread(solveCaptchaTask);
+                thread.start();
+                thread.join();
+                html = solveCaptchaTask.get();
+            } else {
+                ResultsParser resultsParser = new ResultsParser(html);
+                List<Article> articleList = resultsParser.parse();
+                partialResults.get().addAll(articleList);
+                Comparator<Article> comparator = (a1, a2) -> Integer.compare(a2.getCitations(), a1.getCitations());
+                FXCollections.sort(partialResults.get(), comparator);
+                logger.info(String.format("Added %s articles from page %s", articleList.size(), (i+1)));
+                updateMessage(""+partialResults.get().size()+"/"+n);
+                html = null;
+
+                // Check if there will be another page with results
+                if (articleList.size() == resultsPerPage) {
+                    int millis = new Random().nextInt(Config.SLEEP_WIGGLE) + Config.SLEEP_BASE;
+                    logger.info(String.format("Sleeping for %s ms to prevent Google's anti-bot-ban", millis));
+                    Thread.sleep(millis);
+                    i++;
+                } else {
+                    i = numberOfPagesToFetch;
+                }
+            }
+
         }
 
         updateMessage("Retrieved Articles");
