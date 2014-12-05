@@ -1,6 +1,12 @@
 package edu.kit.ksri.paperfinder.model;
 
+import edu.kit.ksri.paperfinder.Config;
 import javafx.beans.property.*;
+
+import java.io.File;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 /**
  * Created by janscheurenbrand on 26.11.14.
@@ -14,6 +20,10 @@ public class Article {
     private IntegerProperty citations = new SimpleIntegerProperty();
     private StringProperty abstractText = new SimpleStringProperty();
     private StringProperty pdfLink = new SimpleStringProperty();
+    private BooleanProperty selected = new SimpleBooleanProperty();
+    private StringProperty sourceURI = new SimpleStringProperty();
+    private StringProperty citationsURI = new SimpleStringProperty();
+    private StringProperty relatedURI = new SimpleStringProperty();
 
     public Article() {}
 
@@ -115,5 +125,75 @@ public class Article {
 
     public boolean hasPDF() {
         return pdfLink != null && pdfLink.get() != null && !pdfLink.get().isEmpty();
+    }
+
+    public boolean getSelected() {
+        return selected.get();
+    }
+
+    public BooleanProperty selectedProperty() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected.set(selected);
+    }
+
+    public void toggleSelected() {
+        this.setSelected(!this.getSelected());
+    }
+
+    public void download() {
+        Thread downloadThread = new Thread(() -> {
+            if (!hasPDF()) {
+                return;
+            }
+            try {
+                String urlString = getPdfLink();
+                URL url = new URL(urlString);
+                File out = new File(Config.CONFIG_PATH + urlString.substring( urlString.lastIndexOf('/')+1, urlString.length()));
+                Files.copy(url.openStream(), out.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            } catch (Exception ignored) {
+                ignored.printStackTrace();
+            }
+        });
+        downloadThread.start();
+
+    }
+
+    public String getSourceURI() {
+        return sourceURI.get();
+    }
+
+    public StringProperty sourceURIProperty() {
+        return sourceURI;
+    }
+
+    public void setSourceURI(String sourceURI) {
+        this.sourceURI.set(sourceURI);
+    }
+
+    public String getCitationsURI() {
+        return citationsURI.get();
+    }
+
+    public StringProperty citationsURIProperty() {
+        return citationsURI;
+    }
+
+    public void setCitationsURI(String citationsURI) {
+        this.citationsURI.set(citationsURI);
+    }
+
+    public String getRelatedURI() {
+        return relatedURI.get();
+    }
+
+    public StringProperty relatedURIProperty() {
+        return relatedURI;
+    }
+
+    public void setRelatedURI(String relatedURI) {
+        this.relatedURI.set(relatedURI);
     }
 }
