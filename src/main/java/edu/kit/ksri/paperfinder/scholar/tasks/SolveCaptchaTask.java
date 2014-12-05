@@ -1,5 +1,6 @@
 package edu.kit.ksri.paperfinder.scholar.tasks;
 
+import edu.kit.ksri.paperfinder.Config;
 import edu.kit.ksri.paperfinder.scholar.http.Request;
 import edu.kit.ksri.paperfinder.scholar.http.Response;
 import edu.kit.ksri.paperfinder.scholar.http.Verb;
@@ -66,7 +67,7 @@ public class SolveCaptchaTask extends Task<String> {
 
     private String getImageHTML() {
         Element imgTag = document.getElementsByTag("img").first();
-        String src = "http://scholar.google.com" + imgTag.attr("src");
+        String src = Config.BASE_DOMAIN + imgTag.attr("src");
         imgTag.attr("src", src);
         return "<html><head><title>Captcha</title></head><body>"+imgTag.outerHtml()+"</body></html>";
     }
