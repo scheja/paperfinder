@@ -1,5 +1,6 @@
 package edu.kit.ksri.paperfinder.scholar.parser;
 
+import edu.kit.ksri.paperfinder.Config;
 import edu.kit.ksri.paperfinder.model.Article;
 import org.jsoup.nodes.Element;
 
@@ -29,11 +30,17 @@ public class ResultsParser extends ParserBase {
     private Article buildArticleFromElement(Element element) {
         Article article = new Article();
 
+        Element title = element.select(".gs_rt > a").first();
         try {
-            Element title = element.select(".gs_rt > a").first();
             article.setTitle(title.text());
         } catch (Exception e) {
             article.setTitle("n/a");
+        }
+
+        try {
+            article.setSourceURI(title.attr("href"));
+        } catch (Exception e) {
+            article.setSourceURI("");
         }
 
         String[] metaInfoTextParts = new String[0];
@@ -72,12 +79,26 @@ public class ResultsParser extends ParserBase {
             article.setSource("n/a");
         }
 
+        Element citationsElement = element.select(".gs_ri > .gs_fl > a").first();
         try {
-            Element citationsElement = element.select(".gs_ri > .gs_fl > a").first();
             String citationText = citationsElement.text();
             article.setCitations(parseInt(citationText.replaceAll("[\\D]", ""),0));
         } catch (Exception e) {
             article.setCitations(-1);
+        }
+
+        try {
+            article.setCitationsURI(Config.BASE_DOMAIN + citationsElement.attr("href"));
+        } catch (Exception e) {
+            article.setCitationsURI("");
+        }
+
+        try {
+            Element relatedElement = citationsElement.nextElementSibling();
+
+            article.setRelatedURI(Config.BASE_DOMAIN + relatedElement.attr("href"));
+        } catch (Exception e) {
+            article.setRelatedURI("");
         }
 
         try {
