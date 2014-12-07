@@ -26,7 +26,7 @@ public class ContentRetriever {
             return FileUtils.readFile(getClass().getResource("/results.html").getFile());
         }
 
-        Request request = new Request(Verb.GET, Config.BASE_DOMAIN.concat("scholar"));
+        Request request = new Request(Verb.GET, Config.BASE_DOMAIN.concat("/scholar"));
         try {
             request.addURIParam("q", URLEncoder.encode(searchTerm, "UTF-8"));
         } catch (UnsupportedEncodingException e) {
