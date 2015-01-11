@@ -1,15 +1,11 @@
 package edu.kit.ksri.paperfinder.controller;
 
 import edu.kit.ksri.paperfinder.model.Article;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -23,10 +19,6 @@ public class SingleArticleController {
     @FXML private Label abstractLabel;
     @FXML private ToggleButton toggleSelectButton;
     @FXML private Button downloadButton;
-
-    @FXML private Label status;
-    private ObservableList<Article> results;
-    private List<Article> completeResultList = new ArrayList<>();
 
     @FXML
     protected void initialize() { }
