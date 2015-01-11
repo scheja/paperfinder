@@ -1,5 +1,6 @@
 package edu.kit.ksri.paperfinder.controller;
 
+import edu.kit.ksri.paperfinder.Config;
 import edu.kit.ksri.paperfinder.export.ExcelExport;
 import edu.kit.ksri.paperfinder.model.Article;
 import edu.kit.ksri.paperfinder.scholar.tasks.RetrieveResultsTask;
@@ -10,6 +11,8 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
@@ -18,11 +21,14 @@ import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,6 +80,9 @@ public class MainController {
         resourceBundle = ResourceBundle.getBundle("paperfinder");
 
         menubar.setUseSystemMenuBar(true);
+
+        resultsTextfield.setText(String.valueOf(Config.DEFAULT_NUMBER_OF_RESULTS));
+
         accordion.setExpandedPane(searchPane);
 
         Platform.runLater(searchText::requestFocus);
@@ -104,7 +113,7 @@ public class MainController {
         String searchString = searchText.getText();
 
         int numberOfResults = Integer.parseInt(resultsTextfield.getText());
-        if (!(numberOfResults > 0)) numberOfResults = 100;
+        if (!(numberOfResults > 0)) numberOfResults = Config.DEFAULT_NUMBER_OF_RESULTS;
 
         boolean includePatents = includePatentsCheckbox.isSelected();
         boolean includeCitations = includeCitationsCheckbox.isSelected();
@@ -206,7 +215,11 @@ public class MainController {
     }
 
     private String t(String key) {
-        return resourceBundle.getString(key);
+        try {
+            return resourceBundle.getString(key);
+        } catch (Exception e) {
+            return "%"+key;
+        }
     }
 
     private void makeNumberField(TextField textField) {
@@ -223,6 +236,50 @@ public class MainController {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+    }
+
+    @FXML
+    private void showCitationsGraph() {
+        showGraph(ChartMode.CITATIONS);
+    }
+
+    @FXML
+    private void showCitationsCumulativeGraph() {
+        showGraph(ChartMode.CITATIONS_CUMULATIVE);
+    }
+
+    @FXML
+    private void showPublishedGraph() {
+        showGraph(ChartMode.PUBLISHED);
+    }
+
+    @FXML
+    private void showPublishedCumulativeGraph() {
+        showGraph(ChartMode.PUBLISHED_CUMULATIVE);
+    }
+
+
+    /**
+     * Starts a new Scene and Stage to display a graphical visualization of different attributes of previously returned
+     * articles.
+     * @param chartMode
+     */
+    private void showGraph(ChartMode chartMode) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/graph.fxml"));
+            loader.setResources(resourceBundle);
+            Pane graphRoot = loader.load();
+            GraphController graphController = (GraphController) loader.getController();
+            Scene scene = new Scene(graphRoot, 600, 400);
+            Stage graphStage = new Stage();
+            graphStage.setTitle(t("graph.title." + chartMode.toString().toLowerCase()));
+            graphStage.setScene(scene);
+            graphController.setArticleList(completeResultList);
+            graphController.setChartMode(chartMode);
+            graphStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

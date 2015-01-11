@@ -78,7 +78,10 @@
           </Menu>
             <Menu mnemonicParsing="false" text="%menu.view">
               <items>
-                <MenuItem mnemonicParsing="false" text="Action 1" />
+                <MenuItem mnemonicParsing="false" onAction="#showCitationsGraph" text="%menu.view.citationsgraph" />
+                <MenuItem mnemonicParsing="false" onAction="#showCitationsCumulativeGraph" text="%menu.view.citationscumulativegraph" />
+                <MenuItem mnemonicParsing="false" onAction="#showPublishedGraph" text="%menu.view.publishedgraph" />
+                <MenuItem mnemonicParsing="false" onAction="#showPublishedCumulativeGraph" text="%menu.view.publishedcumulativegraph" />
               </items>
             </Menu>
           <Menu mnemonicParsing="false" text="%menu.help">
