@@ -82,6 +82,8 @@
                 <MenuItem mnemonicParsing="false" onAction="#showCitationsCumulativeGraph" text="%menu.view.citationscumulativegraph" />
                 <MenuItem mnemonicParsing="false" onAction="#showPublishedGraph" text="%menu.view.publishedgraph" />
                 <MenuItem mnemonicParsing="false" onAction="#showPublishedCumulativeGraph" text="%menu.view.publishedcumulativegraph" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#showDownloads" text="%menu.view.downloads" />
               </items>
             </Menu>
           <Menu mnemonicParsing="false" text="%menu.help">

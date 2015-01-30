@@ -1,12 +1,6 @@
 package edu.kit.ksri.paperfinder.model;
 
-import edu.kit.ksri.paperfinder.Config;
 import javafx.beans.property.*;
-
-import java.io.File;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 
 /**
  * Created by janscheurenbrand on 26.11.14.
@@ -143,24 +137,6 @@ public class Article {
         this.setSelected(!this.getSelected());
     }
 
-    public void download() {
-        Thread downloadThread = new Thread(() -> {
-            if (!hasPDF()) {
-                return;
-            }
-            try {
-                String urlString = getPdfLink();
-                URL url = new URL(urlString);
-                File out = new File(Config.CONFIG_PATH + urlString.substring( urlString.lastIndexOf('/')+1, urlString.length()));
-                Files.copy(url.openStream(), out.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            } catch (Exception ignored) {
-                ignored.printStackTrace();
-            }
-        });
-        downloadThread.start();
-
-    }
-
     public String getSourceURI() {
         return sourceURI.get();
     }
@@ -195,5 +171,10 @@ public class Article {
 
     public void setRelatedURI(String relatedURI) {
         this.relatedURI.set(relatedURI);
+    }
+
+    @Override
+    public String toString() {
+        return author.get() + " -  " + title.get();
     }
 }

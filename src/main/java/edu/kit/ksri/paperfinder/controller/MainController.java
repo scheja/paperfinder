@@ -74,12 +74,24 @@ public class MainController {
     private ObservableList<Article> results;
     private List<Article> completeResultList = new ArrayList<>();
 
+    private DownloadController downloadController = new DownloadController();
+
     @FXML
     protected void initialize() {
 
         resourceBundle = ResourceBundle.getBundle("paperfinder");
 
         menubar.setUseSystemMenuBar(true);
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/downloads.fxml"));
+        loader.setResources(resourceBundle);
+        try {
+            loader.load();
+            downloadController = (DownloadController) loader.getController();
+            downloadController.setMainController(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         resultsTextfield.setText(String.valueOf(Config.DEFAULT_NUMBER_OF_RESULTS));
 
@@ -105,6 +117,7 @@ public class MainController {
         resultsTableView.getSelectionModel().selectedItemProperty().addListener(this::onSelection);
         resultsTableView.setOnKeyPressed(this::handleKeyboardShortcut);
 
+        singleArticleController.setMainController(this);
         singleArticle.setVisible(false);
     }
 
@@ -191,7 +204,7 @@ public class MainController {
 
     @FXML
     private void performDownload(ActionEvent event) {
-        getExportList().forEach(Article::download);
+        getExportList().forEach(downloadController::download);
     }
 
     private void handleKeyboardShortcut(KeyEvent event) {
@@ -214,7 +227,7 @@ public class MainController {
         }
     }
 
-    private String t(String key) {
+    public String t(String key) {
         try {
             return resourceBundle.getString(key);
         } catch (Exception e) {
@@ -240,22 +253,32 @@ public class MainController {
 
     @FXML
     private void showCitationsGraph() {
-        showGraph(ChartMode.CITATIONS);
+        showGraph(GraphController.ChartMode.CITATIONS);
     }
 
     @FXML
     private void showCitationsCumulativeGraph() {
-        showGraph(ChartMode.CITATIONS_CUMULATIVE);
+        showGraph(GraphController.ChartMode.CITATIONS_CUMULATIVE);
     }
 
     @FXML
     private void showPublishedGraph() {
-        showGraph(ChartMode.PUBLISHED);
+        showGraph(GraphController.ChartMode.PUBLISHED);
     }
 
     @FXML
     private void showPublishedCumulativeGraph() {
-        showGraph(ChartMode.PUBLISHED_CUMULATIVE);
+        showGraph(GraphController.ChartMode.PUBLISHED_CUMULATIVE);
+    }
+
+    @FXML
+    private void showDownloads() {
+        Pane downloadsWrap = downloadController.getDownloadsWrap();
+        Scene scene = new Scene(downloadsWrap, 500, 400);
+        Stage graphStage = new Stage();
+        graphStage.setTitle("Downloads");
+        graphStage.setScene(scene);
+        graphStage.show();
     }
 
 
@@ -264,7 +287,7 @@ public class MainController {
      * articles.
      * @param chartMode
      */
-    private void showGraph(ChartMode chartMode) {
+    private void showGraph(GraphController.ChartMode chartMode) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/graph.fxml"));
             loader.setResources(resourceBundle);
@@ -282,4 +305,7 @@ public class MainController {
         }
     }
 
+    public DownloadController getDownloadController() {
+        return downloadController;
+    }
 }

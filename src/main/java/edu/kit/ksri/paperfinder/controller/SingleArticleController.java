@@ -19,6 +19,7 @@ public class SingleArticleController {
     @FXML private Label abstractLabel;
     @FXML private ToggleButton toggleSelectButton;
     @FXML private Button downloadButton;
+    private MainController mainController;
 
     @FXML
     protected void initialize() { }
@@ -42,7 +43,7 @@ public class SingleArticleController {
 
     @FXML
     private void performDownload(ActionEvent event) {
-        article.download();
+        mainController.getDownloadController().download(article);
     }
 
     @FXML
@@ -65,5 +66,14 @@ public class SingleArticleController {
         if (article.getRelatedURI() == null) {
             return;
         }
-        MainController.openWebpage(article.getRelatedURI());    }
+        MainController.openWebpage(article.getRelatedURI());
+    }
+
+    public void setMainController(MainController mainController) {
+        this.mainController = mainController;
+    }
+
+    public MainController getMainController() {
+        return mainController;
+    }
 }
