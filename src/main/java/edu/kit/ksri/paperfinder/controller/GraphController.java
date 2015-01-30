@@ -161,4 +161,8 @@ public class GraphController {
         chart.getData().add(series);
         chartWrap.add(chart,0,0);
     }
+
+    public enum ChartMode {
+        CITATIONS, CITATIONS_CUMULATIVE, PUBLISHED, PUBLISHED_CUMULATIVE
+    }
 }
