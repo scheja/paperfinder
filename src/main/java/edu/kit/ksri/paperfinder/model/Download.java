@@ -14,6 +14,7 @@ import java.awt.*;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Random;
 
 /**
  * Created by janscheurenbrand on 28.01.15.
@@ -150,34 +151,45 @@ public class Download implements Runnable {
         InputStream remoteContentStream = null;
         OutputStream localFileStream = null;
 
-        try {
-            HttpClient httpClient = HttpClientFactory.getHttpClient();
-            HttpGet httpGet = new HttpGet(this.uri);
-            HttpResponse response = httpClient.execute(httpGet);
-            remoteContentStream = response.getEntity().getContent();
-            this.size = response.getEntity().getContentLength();
+        if (Config.TEST_MODE) {
+            int millis = new Random().nextInt(Config.SLEEP_WIGGLE) + Config.SLEEP_BASE;
 
-            File dir = getFile().getParentFile();
-            dir.mkdirs();
-
-            localFileStream = new FileOutputStream(getFile());
-            byte[] buffer = new byte[MAX_BUFFER_SIZE];
-            int sizeOfChunk;
-            this.downloaded = 0;
-            while ((sizeOfChunk = remoteContentStream.read(buffer)) != -1 && this.status.get() == DOWNLOADING) {
-                localFileStream.write(buffer, 0, sizeOfChunk);
-                this.downloaded += sizeOfChunk;
-            }
-            Platform.runLater(() -> setStatus(COMPLETE));
-        } catch (IOException e) {
-            e.printStackTrace();
-            Platform.runLater(() -> setStatus(ERROR_UNKNOWN));
-        } finally {
             try {
-                remoteContentStream.close();
-                localFileStream.close();
+                Thread.sleep(millis);
+                Platform.runLater(() -> setStatus(COMPLETE));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                HttpClient httpClient = HttpClientFactory.getHttpClient();
+                HttpGet httpGet = new HttpGet(this.uri);
+                HttpResponse response = httpClient.execute(httpGet);
+                remoteContentStream = response.getEntity().getContent();
+                this.size = response.getEntity().getContentLength();
+
+                File dir = getFile().getParentFile();
+                dir.mkdirs();
+
+                localFileStream = new FileOutputStream(getFile());
+                byte[] buffer = new byte[MAX_BUFFER_SIZE];
+                int sizeOfChunk;
+                this.downloaded = 0;
+                while ((sizeOfChunk = remoteContentStream.read(buffer)) != -1 && this.status.get() == DOWNLOADING) {
+                    localFileStream.write(buffer, 0, sizeOfChunk);
+                    this.downloaded += sizeOfChunk;
+                }
+                Platform.runLater(() -> setStatus(COMPLETE));
             } catch (IOException e) {
                 e.printStackTrace();
+                Platform.runLater(() -> setStatus(ERROR_UNKNOWN));
+            } finally {
+                try {
+                    remoteContentStream.close();
+                    localFileStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

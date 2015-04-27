@@ -1,6 +1,7 @@
 package edu.kit.ksri.paperfinder.controller;
 
 import edu.kit.ksri.paperfinder.Config;
+import edu.kit.ksri.paperfinder.Main;
 import edu.kit.ksri.paperfinder.export.ExcelExport;
 import edu.kit.ksri.paperfinder.model.Article;
 import edu.kit.ksri.paperfinder.scholar.tasks.RetrieveResultsTask;
@@ -15,7 +16,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -41,6 +44,7 @@ import static edu.kit.ksri.paperfinder.util.NumberUtils.parseInt;
  * Created by janscheurenbrand on 25.11.14.
  */
 public class MainController {
+    Main main;
     ResourceBundle resourceBundle;
 
     @FXML private BorderPane root;
@@ -49,7 +53,10 @@ public class MainController {
     @FXML private TitledPane searchPane;
     @FXML private CheckBox includePatentsCheckbox;
     @FXML private CheckBox includeCitationsCheckbox;
-    @FXML private TextField resultsTextfield;
+    @FXML private TextField firstResultsTextfield;
+    @FXML private RadioButton firstResultsRadio;
+    @FXML private RadioButton allResultsRadio;
+    @FXML private CheckBox appendResultsCheckbox;
     @FXML private TitledPane filterPane;
     @FXML private TextField citationsLowTextfield;
     @FXML private TextField citationsHighTextfield;
@@ -70,6 +77,9 @@ public class MainController {
     @FXML private VBox singleArticle;
     @FXML private SingleArticleController singleArticleController;
     @FXML private Label status;
+    @FXML private Menu windowsMenu;
+    @FXML private MenuItem windowsMenuSeperator;
+    @FXML private MenuItem downloadsMenuItem;
 
     private ObservableList<Article> results;
     private List<Article> completeResultList = new ArrayList<>();
@@ -78,28 +88,14 @@ public class MainController {
 
     @FXML
     protected void initialize() {
-
         resourceBundle = ResourceBundle.getBundle("paperfinder");
-
         menubar.setUseSystemMenuBar(true);
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/downloads.fxml"));
-        loader.setResources(resourceBundle);
-        try {
-            loader.load();
-            downloadController = (DownloadController) loader.getController();
-            downloadController.setMainController(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        resultsTextfield.setText(String.valueOf(Config.DEFAULT_NUMBER_OF_RESULTS));
-
+        firstResultsTextfield.setText(String.valueOf(Config.DEFAULT_NUMBER_OF_RESULTS));
+        firstResultsTextfield.disableProperty().bind(firstResultsRadio.selectedProperty().not());
         accordion.setExpandedPane(searchPane);
-
         Platform.runLater(searchText::requestFocus);
 
-        makeNumberField(resultsTextfield);
+        makeNumberField(firstResultsTextfield);
         makeNumberField(citationsLowTextfield);
         makeNumberField(citationsHighTextfield);
         makeNumberField(publishedYearLowTextfield);
@@ -121,12 +117,24 @@ public class MainController {
         singleArticle.setVisible(false);
     }
 
+    public Main getMain() {
+        return main;
+    }
+
+    public void setMain(Main main) {
+        this.main = main;
+        rebuildWindowMenu();
+    }
+
     @FXML
     private void performSearch(ActionEvent event) {
         String searchString = searchText.getText();
 
-        int numberOfResults = Integer.parseInt(resultsTextfield.getText());
+        int numberOfResults = Integer.parseInt(firstResultsTextfield.getText());
         if (!(numberOfResults > 0)) numberOfResults = Config.DEFAULT_NUMBER_OF_RESULTS;
+        if (allResultsRadio.isSelected()) {
+            numberOfResults = Integer.MAX_VALUE;
+        }
 
         boolean includePatents = includePatentsCheckbox.isSelected();
         boolean includeCitations = includeCitationsCheckbox.isSelected();
@@ -134,7 +142,12 @@ public class MainController {
         RetrieveResultsTask retrieveResultsTask = new RetrieveResultsTask(searchString, numberOfResults, includePatents, includeCitations);
         new Thread(retrieveResultsTask).start();
 
-        results = retrieveResultsTask.getPartialResults();
+        if (appendResultsCheckbox.isSelected()) {
+            results.addAll(retrieveResultsTask.getPartialResults());
+        } else {
+            results = retrieveResultsTask.getPartialResults();
+        }
+
         resultsTableView.setItems(results);
         status.textProperty().bind(retrieveResultsTask.messageProperty());
         retrieveResultsTask.setOnSucceeded(this::afterSearch);
@@ -183,7 +196,7 @@ public class MainController {
         fileChooser.getExtensionFilters().add(extFilter);
 
         fileChooser.setTitle(t("export"));
-        fileChooser.setInitialFileName(searchText.getText()+".xls");
+        fileChooser.setInitialFileName(searchText.getText().replaceAll("[^a-zA-Z0-9.-]", "_")+".xls");
         File file = fileChooser.showSaveDialog(root.getScene().getWindow());
         if (file != null) {
             ExcelExport excelExport = new ExcelExport(getExportList(), file);
@@ -273,14 +286,23 @@ public class MainController {
 
     @FXML
     private void showDownloads() {
-        Pane downloadsWrap = downloadController.getDownloadsWrap();
-        Scene scene = new Scene(downloadsWrap, 500, 400);
-        Stage graphStage = new Stage();
-        graphStage.setTitle("Downloads");
-        graphStage.setScene(scene);
-        graphStage.show();
+        downloadController.showDownloadManager();
     }
 
+    @FXML
+    private void openNewWindow() {
+        main.openNewWindow();
+    }
+
+    @FXML
+    private void closeCurrentWindow() {
+
+    }
+
+    @FXML
+    private void showAbout() {
+
+    }
 
     /**
      * Starts a new Scene and Stage to display a graphical visualization of different attributes of previously returned
@@ -307,5 +329,24 @@ public class MainController {
 
     public DownloadController getDownloadController() {
         return downloadController;
+    }
+
+    public void setDownloadController(DownloadController downloadController) {
+        this.downloadController = downloadController;
+        this.downloadController.setMainController(this);
+    }
+
+
+    public void rebuildWindowMenu() {
+        windowsMenu.getItems().clear();
+        main.getMainControllers().forEach(mc -> {
+            windowsMenu.getItems().add(new MenuItem("test"));
+        });
+        windowsMenu.getItems().add(windowsMenuSeperator);
+        windowsMenu.getItems().add(downloadsMenuItem);
+    }
+
+    public BorderPane getRoot() {
+        return root;
     }
 }

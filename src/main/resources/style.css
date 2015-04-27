@@ -1,0 +1,76 @@
+.table-view, .scroll-pane {
+    -fx-background-color: #fff;
+    -fx-table-cell-border-color: transparent;
+    -fx-table-header-border-color: transparent;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: transparent;
+}
+
+
+.table-view .column-header, .table-view .filler {
+    -fx-size: 18;
+    -fx-border-width: 0 1 1 0;
+    -fx-background-color: transparent;
+    -fx-border-color:
+    transparent
+    #eee
+    #eee
+    transparent;
+    -fx-border-insets: 0 0 0 0;
+}
+
+.table-view .column-header .label {
+    -fx-font-size: 9pt;
+    -fx-alignment: center-left;
+    -fx-opacity: 1;
+    -fx-padding: 5;
+    -fx-text-fill: #666;
+}
+
+.accordion {
+    -fx-base: #eee;
+    -fx-background-color: #eee;
+    -fx-table-cell-border-color: transparent;
+    -fx-table-header-border-color: transparent;
+    -fx-padding: 4;
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+
+}
+
+.accordion > .titled-pane {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+}
+
+.accordion > .titled-pane > .content {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+
+}
+
+.accordion > .titled-pane > .title {
+    -fx-background-color: #eee;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0, 0, 0;
+}
+
+.button, .toggle-button {
+    -fx-padding: 3 15;
+    -fx-font-size: 13px;
+    -fx-font-smoothing-type: lcd;
+    -fx-background-color: #fff;
+    -fx-text-fill: #444;
+    -fx-border-color: #ccc;
+    -fx-border-radius: 4px;
+    -fx-border-insets: -1 -1 -1 -1;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 2, 0, 0, 1);
+}

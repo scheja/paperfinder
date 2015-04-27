@@ -106,27 +106,29 @@ public class GraphController {
         chart.setLegendVisible(false);
         chart.setAnimated(false);
 
-        HashMap<Integer,Integer> distribution = new HashMap<>();
+        if (articleList.size() > 0) {
+            HashMap<Integer,Integer> distribution = new HashMap<>();
 
-        articleList.stream().forEach(article -> {
-            distribution.put(article.getYearPublished(), distribution.getOrDefault(article.getYearPublished(),0)+1);
-        });
+            articleList.stream().forEach(article -> {
+                distribution.put(article.getYearPublished(), distribution.getOrDefault(article.getYearPublished(),0)+1);
+            });
 
-        int min = distribution.keySet().stream().min(Comparator.<Integer>naturalOrder()).get();
-        int max = distribution.keySet().stream().max(Comparator.<Integer>naturalOrder()).get();
+            int min = distribution.keySet().stream().min(Comparator.<Integer>naturalOrder()).get();
+            int max = distribution.keySet().stream().max(Comparator.<Integer>naturalOrder()).get();
 
-        for (int i = min-1; i <= max+1; i++) {
-            distribution.putIfAbsent(i,0);
+            for (int i = min-1; i <= max+1; i++) {
+                distribution.putIfAbsent(i,0);
+            }
+
+            XYChart.Series series = new XYChart.Series();
+
+            distribution.entrySet().stream()
+                    .forEach(entry -> series.getData().add(new XYChart.Data(String.valueOf(entry.getKey()), entry.getValue())));
+
+            chart.getData().clear();
+            chart.getData().add(series);
+            chartWrap.add(chart,0,0);
         }
-
-        XYChart.Series series = new XYChart.Series();
-
-        distribution.entrySet().stream()
-                .forEach(entry -> series.getData().add(new XYChart.Data(String.valueOf(entry.getKey()), entry.getValue())));
-
-        chart.getData().clear();
-        chart.getData().add(series);
-        chartWrap.add(chart,0,0);
     }
 
     private void drawPublishedCumulativeGraph() {

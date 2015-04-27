@@ -23,7 +23,7 @@ public class ContentRetriever {
 
         // To reduce real requests to Google while testing
         if (Config.TEST_MODE) {
-            return FileUtils.readFile(getClass().getResource("/results.html").getFile());
+            return FileUtils.readFile("/Users/janscheurenbrand/Code/paperfinder/src/main/resources/demo/results" + i + ".html");
         }
 
         Request request = new Request(Verb.GET, Config.BASE_DOMAIN.concat("/scholar"));

@@ -73,7 +73,7 @@ public class RetrieveResultsTask extends Task<ObservableList<Article>> {
                 Comparator<Article> comparator = (a1, a2) -> Integer.compare(a2.getCitations(), a1.getCitations());
                 FXCollections.sort(partialResults.get(), comparator);
                 logger.info(String.format("Added %s articles from page %s", articleList.size(), (i+1)));
-                updateMessage(""+partialResults.get().size()+"/"+n);
+                updateMessage("Retrieved results: " + partialResults.get().size());
                 html = null;
 
                 // Check if there will be another page with results
@@ -89,7 +89,7 @@ public class RetrieveResultsTask extends Task<ObservableList<Article>> {
 
         }
 
-        updateMessage("Retrieved Articles");
+        updateMessage("Retrieving finished. Retrieved results: " + partialResults.get().size());
         return partialResults.get();
     }
 

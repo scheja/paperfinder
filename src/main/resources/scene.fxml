@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.input.*?>
 <?import javafx.scene.text.*?>
 <?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane fx:id="root" minHeight="600.0" minWidth="800.0" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.kit.ksri.paperfinder.controller.MainController">
+<BorderPane fx:id="root" minHeight="500.0" minWidth="700.0" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.kit.ksri.paperfinder.controller.MainController">
    <left>
       <Accordion fx:id="accordion" BorderPane.alignment="CENTER">
         <panes>
@@ -15,12 +16,17 @@
               <AnchorPane minHeight="0.0" minWidth="0.0">
                      <children>
                         <TextField fx:id="searchText" layoutX="14.0" layoutY="14.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" promptText="%search.placeholder" />
-                         <Button layoutX="14.0" layoutY="192.0" mnemonicParsing="false" onAction="#performSearch" prefHeight="26.0" prefWidth="163.0" text="%search.button" />
+                         <Button layoutX="14.0" layoutY="222.0" mnemonicParsing="false" onAction="#performSearch" prefHeight="26.0" prefWidth="163.0" text="%search.button" />
                         <CheckBox fx:id="includePatentsCheckbox" layoutX="14.0" layoutY="58.0" mnemonicParsing="false" text="%search.patents" />
                         <CheckBox fx:id="includeCitationsCheckbox" layoutX="14.0" layoutY="86.0" mnemonicParsing="false" text="%search.citations" />
-                        <TextField fx:id="resultsTextfield" layoutX="14.0" layoutY="119.0" prefHeight="26.0" prefWidth="65.0" promptText="Anzahl" text="100" />
-                        <Label layoutX="84.0" layoutY="124.0" text="%search.results" />
-                        <CheckBox fx:id="appendResultsCheckbox" layoutX="14.0" layoutY="157.0" mnemonicParsing="false" text="%search.appendResults" />
+                        <TextField fx:id="firstResultsTextfield" disable="true" layoutX="73.0" layoutY="146.0" prefHeight="26.0" prefWidth="65.0" promptText="Anzahl" text="100" />
+                        <CheckBox fx:id="appendResultsCheckbox" layoutX="14.0" layoutY="187.0" mnemonicParsing="false" text="%search.appendResults" />
+                        <RadioButton fx:id="firstResultsRadio" layoutX="14.0" layoutY="150.0" mnemonicParsing="false" text="First">
+                           <toggleGroup>
+                              <ToggleGroup fx:id="numRes" />
+                           </toggleGroup>
+                        </RadioButton>
+                        <RadioButton fx:id="allResultsRadio" layoutX="14.0" layoutY="122.0" mnemonicParsing="false" selected="true" text="All Results" toggleGroup="$numRes" />
                      </children>
                   </AnchorPane>
             </content>
@@ -64,11 +70,19 @@
       </Label>
    </bottom>
    <top>
-      <MenuBar fx:id="menubar" BorderPane.alignment="CENTER">
+      <MenuBar fx:id="menubar" useSystemMenuBar="true" BorderPane.alignment="CENTER">
         <menus>
           <Menu mnemonicParsing="false" text="%menu.file">
             <items>
-              <MenuItem mnemonicParsing="false" text="Close" />
+                  <MenuItem mnemonicParsing="false" onAction="#openNewWindow" text="%menu.file.newwindow">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="N" control="UP" meta="DOWN" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+              <MenuItem mnemonicParsing="false" onAction="#closeCurrentWindow" text="%menu.file.closewindow">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="W" control="UP" meta="DOWN" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="%menu.edit">
@@ -76,19 +90,26 @@
               <MenuItem mnemonicParsing="false" text="Delete" />
             </items>
           </Menu>
-            <Menu mnemonicParsing="false" text="%menu.view">
+            <Menu mnemonicParsing="false" text="%menu.plot">
               <items>
-                <MenuItem mnemonicParsing="false" onAction="#showCitationsGraph" text="%menu.view.citationsgraph" />
-                <MenuItem mnemonicParsing="false" onAction="#showCitationsCumulativeGraph" text="%menu.view.citationscumulativegraph" />
-                <MenuItem mnemonicParsing="false" onAction="#showPublishedGraph" text="%menu.view.publishedgraph" />
-                <MenuItem mnemonicParsing="false" onAction="#showPublishedCumulativeGraph" text="%menu.view.publishedcumulativegraph" />
-                  <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" onAction="#showDownloads" text="%menu.view.downloads" />
+                <MenuItem mnemonicParsing="false" onAction="#showCitationsGraph" text="%menu.plot.citationsgraph" />
+                <MenuItem mnemonicParsing="false" onAction="#showCitationsCumulativeGraph" text="%menu.plot.citationscumulativegraph" />
+                <MenuItem mnemonicParsing="false" onAction="#showPublishedGraph" text="%menu.plot.publishedgraph" />
+                <MenuItem mnemonicParsing="false" onAction="#showPublishedCumulativeGraph" text="%menu.plot.publishedcumulativegraph" />
               </items>
+            </Menu>
+            <Menu fx:id="windowsMenu" mnemonicParsing="false" text="%menu.window">
+               <items>
+                  <SeparatorMenuItem fx:id="windowsMenuSeperator" mnemonicParsing="false" />
+                  <MenuItem fx:id="downloadsMenuItem" mnemonicParsing="false" onAction="#showDownloads" text="%menu.window.downloads" />
+               </items>
             </Menu>
           <Menu mnemonicParsing="false" text="%menu.help">
             <items>
-              <MenuItem mnemonicParsing="false" text="About" />
+                  <MenuItem mnemonicParsing="false" text="%menu.help.help" />
+                  <MenuItem mnemonicParsing="false" text="%menu.help.searchoptions" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+              <MenuItem mnemonicParsing="false" onAction="#showAbout" text="%menu.help.about" />
             </items>
           </Menu>
         </menus>
@@ -114,6 +135,9 @@
                      </columnResizePolicy>
                   </TableView>
                </content>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
             </ScrollPane>
              <fx:include fx:id="singleArticle" source="single.fxml" />
          </children>
